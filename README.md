@@ -18,4 +18,4 @@ Survive. Adapt. Don't get comfortable.
 - 🧠 Adaptation-focused gameplay — movement, timing and awareness matter
 - ♻️ Every run plays differently — unpredictable situations keep you on your toes
 
-«Minecraft survival, except the world refuses to let you breathe.»
+Minecraft survival, except the world refuses to let you breathe.

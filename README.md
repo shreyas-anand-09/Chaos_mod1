@@ -19,3 +19,11 @@ Survive. Adapt. Don't get comfortable.
 - ♻️ Every run plays differently — unpredictable situations keep you on your toes
 
 Minecraft survival, except the world refuses to let you breathe.
+
+INSTRUCTIONS ON HOW TO USE THE MOD:
+1) Install the minescript mod along with it's dependencies from curseforge or modrinth.
+2) Place the mods into your mod folder.
+3) When you launch minecraft for the first time, a minescript folder will be automatically created.
+4) In that folder, within the config text file type/paste the location of your python script.
+5) Once you launch the world type "\(name of file)"
+6) Now your all set. Good luck.

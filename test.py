@@ -12,8 +12,7 @@ HAZARD_BLOCKS = [
     "minecraft:cobblestone",
     "minecraft:oak_log",
     "minecraft:gravel",
-    "minecraft:deepslate",
-]
+    "minecraft:deepslate"]
 
 HOSTILE_MOBS = [
     "minecraft:zombie",
@@ -26,23 +25,36 @@ HOSTILE_MOBS = [
     "minecraft:slime",
     "minecraft:phantom",
     "minecraft:pillager",
-    "minecraft:vindicator",
-]
+    "minecraft:vindicator"]
 
 BOSS_MOBS = [
     "minecraft:warden",
     "minecraft:wither",
-    "minecraft:ender_dragon",
-]
+    "minecraft:ender_dragon"]
+
+EFFECTS = [
+    "minecraft:levitation",
+    "minecraft:blindness",
+    "minecraft:nausea",
+    "minecraft:jump_boost",
+    "minecraft:slowness",
+    "minecraft:weakness",
+    "minecraft:poison",
+    "minecraft:hunger",
+    "minecraft:mining_fatigue",
+    "minecraft:glowing",
+    "minecraft:levitation"]
 
 CHANGE_INTERVAL = 30
 REACTION_TIME = 5
 CHECK_INTERVAL = 0.1
 
 MOB_INTERVAL = 30
-BOSS_INTERVAL = 10
+BOSS_INTERVAL = 120
 BOSS_WARNING_TIME = 10
 BOSS_SPAWN_HEIGHT = 10
+EFFECT_INTERVAL=10
+DELETION_INVENTORY=10
 
 BOSSBAR_ID = "hazard:boss_countdown"
 
@@ -69,18 +81,16 @@ def summon_boss_above_player(boss):
     minescript.execute(
         f"summon {boss} ~ ~{BOSS_SPAWN_HEIGHT} ~"
     )
+    minescript.execute(f"bossbar remove {BOSSBAR_ID}")
+    minescript.execute(f"bossbar add {BOSSBAR_ID} {{text:'BOSS INCOMING!',color:'red',bold:true}}")
+    minescript.execute(f"bossbar set {BOSSBAR_ID} players @s")
+    minescript.execute(f"bossbar set {BOSSBAR_ID} max {BOSS_WARNING_TIME}")
+    minescript.execute(f"bossbar set {BOSSBAR_ID} color red")
+    minescript.execute(f"bossbar set {BOSSBAR_ID} style notched_10")
+    minescript.execute(f"bossbar set {BOSSBAR_ID} visible false")
 
-minescript.execute(f"bossbar remove {BOSSBAR_ID}")
-minescript.execute(
-    f"bossbar add {BOSSBAR_ID} {{text:'BOSS INCOMING!',color:'red',bold:true}}"
-)
-minescript.execute(f"bossbar set {BOSSBAR_ID} players @s")
-minescript.execute(f"bossbar set {BOSSBAR_ID} max {BOSS_WARNING_TIME}")
-minescript.execute(f"bossbar set {BOSSBAR_ID} color red")
-minescript.execute(f"bossbar set {BOSSBAR_ID} style notched_10")
-minescript.execute(f"bossbar set {BOSSBAR_ID} visible false")
-
-
+def give_effects():
+    minescript.execute(f"effect give @s {random.choice(EFFECTS)}")
 while True:
     now = time.monotonic()
 
@@ -97,16 +107,11 @@ while True:
         display_name = (
             current_hazard.replace("minecraft:", "")
             .replace("_", " ")
-            .title()
-        )
+            .title())
 
         minescript.execute("title @s times 5 50 10")
-        minescript.execute(
-            f"title @s title {{text:'Hazard: {display_name}',color:'gold',bold:true}}"
-        )
-        minescript.execute(
-            f"title @s subtitle {{text:'Move away! Active in {REACTION_TIME} seconds',color:'yellow'}}"
-        )
+        minescript.execute(f"title @s title {{text:'Hazard: {display_name}',color:'gold',bold:true}}")
+        minescript.execute(f"title @s subtitle {{text:'Move away! Active in {REACTION_TIME} seconds',color:'yellow'}}")
 
     if now >= next_mob_time:
         summon_nearby(random.choice(HOSTILE_MOBS), 6)
@@ -126,8 +131,7 @@ while True:
             )
             minescript.execute(
                 f"bossbar set {BOSSBAR_ID} "
-                f"name {{text:'BOSS INCOMING: {seconds_left}s',color:'red',bold:true}}"
-            )
+                f"name {{text:'BOSS INCOMING: {seconds_left}s',color:'red',bold:true}}")
             last_bossbar_seconds = seconds_left
 
 
@@ -146,6 +150,11 @@ while True:
         math.floor(z),
     )
     block_id = block.split("[", 1)[0]
+
+    if now>=EFFECT_INTERVAL:
+        give_effects()
+        EFFECT_INTERVAL = now + EFFECT_INTERVAL
+
 
     if now >= hazard_active_time and block_id == current_hazard:
         minescript.execute(f"bossbar set {BOSSBAR_ID} visible false")
